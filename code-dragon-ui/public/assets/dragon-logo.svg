@@ -1,0 +1,17 @@
+<svg 
+  width="64" 
+  height="64" 
+  viewBox="0 0 64 64" 
+  fill="none" 
+  xmlns="http://www.w3.org/2000/svg"
+>
+  <!-- Simple black & white dragon shape -->
+  <circle cx="32" cy="32" r="32" fill="white"/>
+  <path
+    d="M20 44C22 44 24 42 25 40C26 38 26 35 26 32C26 27 30 24 34 24C38 24 44 27 44 32C44 35 44 38 45 40C46 42 48 44 50 44"
+    stroke="black"
+    stroke-width="2"
+    stroke-linecap="round"
+    fill="none"
+  />
+</svg>
