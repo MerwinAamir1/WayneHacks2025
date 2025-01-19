@@ -1,4 +1,5 @@
 "use client";
+
 import { python } from "@codemirror/lang-python";
 import dynamic from "next/dynamic";
 import { useState } from "react";
@@ -39,38 +40,45 @@ export default function SandboxPage() {
   }
 
   return (
-    <div className="p-8 bg-brandGray-900 min-h-screen">
-      <div className="max-w-4xl mx-auto bg-brandGray-800 p-6 rounded shadow-md">
-        <h1 className="text-3xl font-display mb-4 text-brandWhite">Sandbox</h1>
-        <p className="text-brandGray-300 mb-6">
-          Edit your Python code below, then click <strong>Run Code</strong> to
-          execute it on the server.
-        </p>
-
-        <div className="mb-4">
+    <div className="bg-brandBlack text-brandWhite min-h-screen flex flex-col">
+      <header className="w-full py-8 bg-brandGray-900 shadow-lg shadow-brandBlack">
+        <div className="max-w-6xl mx-auto px-6">
+          <h1 className="text-4xl md:text-5xl font-display mb-2">Sandbox</h1>
+          <p className="text-brandGray-300 text-sm md:text-base leading-relaxed">
+            Edit your Python code below, then click <strong>Run Code</strong> to
+            execute it on our server. See the output instantly!
+          </p>
+        </div>
+      </header>
+      <main className="flex-grow max-w-6xl mx-auto w-full px-6 py-8 space-y-6">
+        <section className="bg-brandGray-800 rounded p-4 shadow-md">
+          <h2 className="text-xl font-display mb-4">Your Code</h2>
           <CodeMirror
             value={code}
-            height="300px"
+            height="400px"
             extensions={[python()]}
             theme="dark"
             onChange={(value) => setCode(value)}
-            className="text-sm rounded"
+            className="border border-brandGray-700 rounded"
           />
-        </div>
+          <div className="mt-4 text-right">
+            <button
+              onClick={handleRunCode}
+              className="inline-block px-6 py-2 bg-brandWhite text-brandBlack rounded font-semibold hover:opacity-80 transition"
+              disabled={isRunning}
+            >
+              {isRunning ? "Running..." : "Run Code"}
+            </button>
+          </div>
+        </section>
 
-        <button
-          onClick={handleRunCode}
-          className="px-6 py-2 bg-brandWhite text-brandBlack rounded font-semibold hover:opacity-80 transition"
-          disabled={isRunning}
-        >
-          {isRunning ? "Running..." : "Run Code"}
-        </button>
-
-        <div className="mt-6 bg-brandGray-900 p-4 rounded min-h-[100px]">
-          <h2 className="text-lg font-semibold mb-2">Output:</h2>
-          <pre className="text-brandGray-300 whitespace-pre-wrap">{output}</pre>
-        </div>
-      </div>
+        <section className="bg-brandGray-800 rounded p-4 shadow-md">
+          <h2 className="text-xl font-display mb-2">Output</h2>
+          <div className="bg-brandGray-900 rounded p-3 min-h-[150px] text-brandGray-300">
+            {output}
+          </div>
+        </section>
+      </main>
     </div>
   );
 }

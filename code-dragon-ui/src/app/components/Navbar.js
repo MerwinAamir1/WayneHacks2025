@@ -1,159 +1,235 @@
 "use client";
 
+import {
+  BookOpen,
+  Bot,
+  ChevronRight,
+  Code2,
+  Home,
+  LogOut,
+  Menu,
+  Terminal,
+  X,
+} from "lucide-react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useState } from "react";
 
-export default function NavBar() {
-  const [isOpen, setIsOpen] = useState(false);
-
-  const isSignedIn = false;
-
+function NavLink({
+  href,
+  icon: Icon,
+  children,
+  isActive,
+  onClick,
+  className = "",
+}) {
   return (
-    <header className="w-full bg-brandBlack shadow-lg shadow-brandBlack relative z-50">
-      <div className="mx-auto px-4 py-3 flex items-center justify-between">
-        <Link href="/">
-          <a className="flex items-center gap-2 hover:opacity-80 transition">
-            <img
-              src="/dragon-logo.svg"
-              alt="Code Dragon Logo"
-              className="w-8 h-8"
-            />
-            <span className="text-2xl font-display text-brandWhite tracking-wider">
-              Code Dragon
-            </span>
-          </a>
-        </Link>
-
-        <button
-          onClick={() => setIsOpen(!isOpen)}
-          className="md:hidden text-brandWhite hover:text-brandGray-300 transition focus:outline-none"
-        >
-          {isOpen ? (
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-7 w-7"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M6 18L18 6M6 6l12 12"
-              />
-            </svg>
-          ) : (
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-7 w-7"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M4 8h16M4 16h16"
-              />
-            </svg>
-          )}
-        </button>
-
-        <nav className="hidden md:flex items-center space-x-6">
-          <NavLinks isSignedIn={isSignedIn} />
-        </nav>
-      </div>
-
-      <div
-        className={`
-          md:hidden bg-brandBlack transition-all duration-300
-          ${
-            isOpen
-              ? "max-h-96 opacity-100"
-              : "max-h-0 opacity-0 pointer-events-none"
-          }
-          overflow-hidden
-        `}
-      >
-        <nav className="px-4 pt-2 pb-4 flex flex-col space-y-2">
-          <NavLinks
-            isSignedIn={isSignedIn}
-            onClickLink={() => setIsOpen(false)}
-          />
-        </nav>
-      </div>
-    </header>
+    <Link
+      href={href}
+      onClick={onClick}
+      className={`
+        group flex items-center gap-2 px-3 py-2 rounded-md text-sm transition-colors
+        ${
+          isActive
+            ? "bg-brandGray-800 text-brandWhite"
+            : "text-brandGray-400 hover:bg-brandGray-800/50 hover:text-brandWhite"
+        }
+        ${className}
+      `}
+    >
+      <Icon className="w-4 h-4" />
+      <span>{children}</span>
+      <ChevronRight
+        className={`w-4 h-4 ml-auto transition-transform duration-200 
+          ${isActive ? "opacity-100" : "opacity-0 group-hover:opacity-100"}`}
+      />
+    </Link>
   );
 }
 
-function NavLinks({ isSignedIn, onClickLink }) {
-  const handleClick = (fn) => {
-    if (onClickLink) onClickLink();
-    if (fn) fn();
-  };
+function MobileNav({ isOpen, onClose, isSignedIn, currentPath }) {
+  return (
+    <div
+      className={`
+        fixed inset-0 z-50 transform transition-transform duration-300 md:hidden
+        ${isOpen ? "translate-x-0" : "-translate-x-full"}
+      `}
+    >
+      {/* Backdrop */}
+      <div
+        className={`
+          absolute inset-0 bg-black/50 backdrop-blur-sm transition-opacity duration-300
+          ${isOpen ? "opacity-100" : "opacity-0"}
+        `}
+        onClick={onClose}
+      />
+
+      {/* Menu */}
+      <div className="relative w-4/5 max-w-xs h-full bg-brandBlack border-r border-brandGray-800">
+        <div className="flex flex-col h-full">
+          <div className="p-4 border-b border-brandGray-800">
+            <div className="flex items-center justify-between">
+              <span className="text-lg font-medium">Navigation</span>
+              <button
+                onClick={onClose}
+                className="p-2 hover:bg-brandGray-800 rounded-md transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+          </div>
+
+          <nav className="flex-grow p-4 space-y-1">
+            <NavLink
+              href="/"
+              icon={Home}
+              isActive={currentPath === "/"}
+              onClick={onClose}
+            >
+              Home
+            </NavLink>
+            <NavLink
+              href="/challenges"
+              icon={Code2}
+              isActive={currentPath === "/challenges"}
+              onClick={onClose}
+            >
+              Challenges
+            </NavLink>
+            <NavLink
+              href="/sandbox"
+              icon={Terminal}
+              isActive={currentPath === "/sandbox"}
+              onClick={onClose}
+            >
+              Sandbox
+            </NavLink>
+            <NavLink
+              href="/assistant"
+              icon={Bot}
+              isActive={currentPath === "/assistant"}
+              onClick={onClose}
+            >
+              AI Assistant
+            </NavLink>
+            <NavLink
+              href="/curriculum"
+              icon={BookOpen}
+              isActive={currentPath === "/curriculum"}
+              onClick={onClose}
+            >
+              Curriculum
+            </NavLink>
+          </nav>
+
+          <div className="p-4 border-t border-brandGray-800">
+            {isSignedIn ? (
+              <button
+                onClick={onClose}
+                className="w-full flex items-center gap-2 px-3 py-2 text-sm text-red-400 hover:bg-red-500/10 rounded-md transition-colors"
+              >
+                <LogOut className="w-4 h-4" />
+                Sign Out
+              </button>
+            ) : (
+              <Link
+                href="/signout"
+                onClick={onClose}
+                className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-brandWhite text-brandBlack rounded-md font-medium hover:bg-gray-100 transition-colors"
+              >
+                Sign Out
+                <ChevronRight className="w-4 h-4" />
+              </Link>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default function NavBar() {
+  const [isOpen, setIsOpen] = useState(false);
+  const currentPath = usePathname();
+  const isSignedIn = false;
 
   return (
-    <>
-      <Link href="/">
-        <a
-          onClick={() => handleClick()}
-          className="text-brandWhite hover:text-brandGray-300 transition-colors"
+    <header className="sticky top-0 z-40 w-full border-b border-brandGray-800 bg-brandBlack/80 backdrop-blur-sm">
+      <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between gap-8">
+        <Link
+          href="/"
+          className="flex items-center gap-2 font-medium hover:text-brandGray-300 transition-colors"
         >
-          Home
-        </a>
-      </Link>
-      <Link href="/challenges">
-        <a
-          onClick={() => handleClick()}
-          className="text-brandWhite hover:text-brandGray-300 transition-colors"
-        >
-          Challenges
-        </a>
-      </Link>
-      <Link href="/sandbox">
-        <a
-          onClick={() => handleClick()}
-          className="text-brandWhite hover:text-brandGray-300 transition-colors"
-        >
-          Sandbox
-        </a>
-      </Link>
-      <Link href="/assistant">
-        <a
-          onClick={() => handleClick()}
-          className="text-brandWhite hover:text-brandGray-300 transition-colors"
-        >
-          AI Assistant
-        </a>
-      </Link>
-      <Link href="/curriculum">
-        <a
-          onClick={() => handleClick()}
-          className="text-brandWhite hover:text-brandGray-300 transition-colors"
-        >
-          Curriculum
-        </a>
-      </Link>
-
-      {isSignedIn ? (
-        <a
-          onClick={() => handleClick()}
-          className="text-brandWhite hover:text-brandGray-300 transition-colors cursor-pointer"
-        >
-          Sign Out
-        </a>
-      ) : (
-        <Link href="/signin">
-          <a
-            onClick={() => handleClick()}
-            className="bg-brandWhite text-brandBlack font-semibold px-3 py-1 rounded hover:bg-brandGray-300 transition-colors"
-          >
-            Sign In
-          </a>
+          <span className="text-2xl tracking-tight">Code Dragon</span>
         </Link>
-      )}
-    </>
+
+        {/* Desktop Navigation */}
+        <nav className="hidden md:flex items-center gap-1 flex-grow">
+          <NavLink href="/" icon={Home} isActive={currentPath === "/"}>
+            Home
+          </NavLink>
+          <NavLink
+            href="/challenges"
+            icon={Code2}
+            isActive={currentPath === "/challenges"}
+          >
+            Challenges
+          </NavLink>
+          <NavLink
+            href="/sandbox"
+            icon={Terminal}
+            isActive={currentPath === "/sandbox"}
+          >
+            Sandbox
+          </NavLink>
+          <NavLink
+            href="/assistant"
+            icon={Bot}
+            isActive={currentPath === "/assistant"}
+          >
+            AI Assistant
+          </NavLink>
+          <NavLink
+            href="/curriculum"
+            icon={BookOpen}
+            isActive={currentPath === "/curriculum"}
+          >
+            Curriculum
+          </NavLink>
+        </nav>
+
+        {/* Auth Button - Desktop */}
+        <div className="hidden md:block">
+          {isSignedIn ? (
+            <button className="flex items-center gap-2 px-3 py-2 text-sm text-red-400 hover:bg-red-500/10 rounded-md transition-colors">
+              <LogOut className="w-4 h-4" />
+              Sign Out
+            </button>
+          ) : (
+            <Link
+              href="/signout"
+              className="flex items-center gap-2 px-4 py-2 bg-brandWhite text-brandBlack rounded-md text-sm font-medium hover:bg-gray-100 transition-colors"
+            >
+              Sign Out
+              <ChevronRight className="w-4 h-4" />
+            </Link>
+          )}
+        </div>
+
+        <button
+          onClick={() => setIsOpen(true)}
+          className="md:hidden p-2 hover:bg-brandGray-800 rounded-md transition-colors"
+        >
+          <Menu className="w-5 h-5" />
+        </button>
+      </div>
+
+      <MobileNav
+        isOpen={isOpen}
+        onClose={() => setIsOpen(false)}
+        isSignedIn={isSignedIn}
+        currentPath={currentPath}
+      />
+    </header>
   );
 }
